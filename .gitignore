@@ -1,0 +1,25 @@
+# Neovim
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Ghidra projects (cached analyses)
+projects/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Testing
+test/
+*.test
+
+# IDE
+.idea/
+.vscode/
+*.code-workspace

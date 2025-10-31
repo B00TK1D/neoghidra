@@ -1,0 +1,188 @@
+*neoghidra.txt*  Ghidra integration for Neovim
+
+==============================================================================
+CONTENTS                                                *neoghidra-contents*
+
+    1. Introduction ................... |neoghidra-introduction|
+    2. Requirements ................... |neoghidra-requirements|
+    3. Installation ................... |neoghidra-installation|
+    4. Configuration .................. |neoghidra-configuration|
+    5. Commands ....................... |neoghidra-commands|
+    6. Mappings ....................... |neoghidra-mappings|
+    7. Functions ...................... |neoghidra-functions|
+    8. Examples ....................... |neoghidra-examples|
+
+==============================================================================
+1. Introduction                                     *neoghidra-introduction*
+
+NeoGhidra is a Neovim plugin that integrates Ghidra's powerful decompilation
+engine directly into your editor. It provides automatic binary detection,
+decompilation, disassembly viewing, and IDE-like features for reverse
+engineering.
+
+Features:
+  - Automatic binary detection and decompilation
+  - Decompiler and disassembly views
+  - Symbol navigation (go to definition, rename)
+  - Offset-based navigation
+  - Function and symbol browsing
+  - Treesitter integration
+  - Smart caching
+
+==============================================================================
+2. Requirements                                     *neoghidra-requirements*
+
+  - Neovim 0.8 or later
+  - Ghidra installation
+  - Python 3
+  - (Optional) nvim-treesitter for enhanced syntax highlighting
+  - (Optional) telescope.nvim for better browsing
+
+==============================================================================
+3. Installation                                     *neoghidra-installation*
+
+Using lazy.nvim: >
+    {
+      'B00TK1D/neoghidra',
+      config = function()
+        require('neoghidra').setup({
+          ghidra_path = '/opt/ghidra',
+        })
+      end
+    }
+<
+
+==============================================================================
+4. Configuration                                   *neoghidra-configuration*
+
+Setup options:
+
+ghidra_path                                         *neoghidra-ghidra_path*
+    Path to Ghidra installation directory.
+    Default: `os.getenv("GHIDRA_INSTALL_DIR")` or `"/opt/ghidra"`
+
+project_dir                                         *neoghidra-project_dir*
+    Path to store Ghidra projects and cached analyses.
+    Default: `vim.fn.stdpath("data") .. "/neoghidra/projects"`
+
+auto_analyze                                       *neoghidra-auto_analyze*
+    Automatically prompt to analyze binaries when opened.
+    Default: `true`
+
+default_view                                       *neoghidra-default_view*
+    Default view to open: "decompiler" or "disassembly"
+    Default: `"decompiler"`
+
+analysis_timeout                               *neoghidra-analysis_timeout*
+    Timeout for Ghidra analysis in seconds.
+    Default: `300`
+
+keymaps                                                 *neoghidra-keymaps*
+    Table of keymaps. See |neoghidra-mappings| for defaults.
+
+==============================================================================
+5. Commands                                             *neoghidra-commands*
+
+:NeoGhidraSetup                                         *:NeoGhidraSetup*
+    Initialize the NeoGhidra plugin.
+
+:NeoGhidraDecompile [file]                          *:NeoGhidraDecompile*
+    Open a binary file in decompiler view. If no file is specified, uses
+    the current buffer.
+
+:NeoGhidraDisassemble [file]                      *:NeoGhidraDisassemble*
+    Open a binary file in disassembly view.
+
+:NeoGhidraJump {offset}                                 *:NeoGhidraJump*
+    Jump to a hex offset in the current view.
+    Examples: >
+        :NeoGhidraJump f82710
+        :NeoGhidraJump 0x401000
+<
+
+:NeoGhidraFunctions                                 *:NeoGhidraFunctions*
+    List all functions in the current binary.
+
+:NeoGhidraSymbols                                     *:NeoGhidraSymbols*
+    List all symbols in the current binary.
+
+:NeoGhidraClearCache                               *:NeoGhidraClearCache*
+    Clear the analysis cache.
+
+==============================================================================
+6. Mappings                                             *neoghidra-mappings*
+
+Default mappings in NeoGhidra buffers:
+
+<leader>gt                                        *neoghidra-toggle-view*
+    Toggle between decompiler and disassembly views.
+
+gd                                            *neoghidra-goto-definition*
+    Go to the definition of the symbol under cursor.
+
+<leader>gr                                       *neoghidra-rename-symbol*
+    Rename the symbol under cursor.
+
+<leader>gR                                    *neoghidra-show-references*
+    Show references to the symbol under cursor.
+
+<leader>gy                                     *neoghidra-retype-variable*
+    Change the type of the variable under cursor.
+
+<leader>go                                       *neoghidra-jump-to-offset*
+    Jump to a hex offset (prompts for input).
+
+<leader>gf                                              *neoghidra-refresh*
+    Refresh the current decompilation/disassembly.
+
+<leader>gF                                       *neoghidra-list-functions*
+    List all functions.
+
+<leader>gs                                         *neoghidra-list-symbols*
+    List all symbols.
+
+==============================================================================
+7. Functions                                           *neoghidra-functions*
+
+require('neoghidra').setup({opts})                  *neoghidra.setup()*
+    Setup the plugin with optional configuration.
+
+require('neoghidra').open_decompiler(filepath)
+                                              *neoghidra.open_decompiler()*
+    Open a binary file in decompiler view.
+
+require('neoghidra').open_disassembly(filepath, address)
+                                            *neoghidra.open_disassembly()*
+    Open a binary file in disassembly view, optionally starting at an
+    address.
+
+require('neoghidra').toggle_view()               *neoghidra.toggle_view()*
+    Toggle between decompiler and disassembly views.
+
+==============================================================================
+8. Examples                                             *neoghidra-examples*
+
+Basic setup: >
+    require('neoghidra').setup({
+      ghidra_path = '/opt/ghidra',
+      auto_analyze = true,
+    })
+<
+
+Custom keymaps: >
+    require('neoghidra').setup({
+      ghidra_path = '/opt/ghidra',
+      keymaps = {
+        toggle_view = '<C-t>',
+        goto_definition = '<C-]>',
+        rename_symbol = '<F2>',
+      }
+    })
+<
+
+Open a binary programmatically: >
+    require('neoghidra').open_decompiler('/bin/ls')
+<
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:
