@@ -16,8 +16,11 @@ __pycache__/
 *.pyo
 
 # Testing
-test/
 *.test
+
+# Test output
+test/*.log
+test/test_binary
 
 # IDE
 .idea/

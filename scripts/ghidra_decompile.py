@@ -187,9 +187,32 @@ if __name__ == '__main__':
     # Note: When run via analyzeHeadless, the program is automatically analyzed
     # We don't need to trigger analysis manually here
 
-    result = analyze_program()
+    try:
+        result = analyze_program()
 
-    # Output as JSON
-    print("__NEOGHIDRA_JSON_START__")
-    print(json.dumps(result, indent=2))
-    print("__NEOGHIDRA_JSON_END__")
+        # Output as JSON with markers
+        # Use sys.stdout to ensure proper flushing
+        sys.stdout.write("__NEOGHIDRA_JSON_START__\n")
+        sys.stdout.flush()
+
+        # Write JSON (indent for readability)
+        json_output = json.dumps(result, indent=2)
+        sys.stdout.write(json_output)
+        sys.stdout.write("\n")
+        sys.stdout.flush()
+
+        sys.stdout.write("__NEOGHIDRA_JSON_END__\n")
+        sys.stdout.flush()
+
+    except Exception as e:
+        # If anything fails, output error JSON
+        import traceback
+        error_result = {
+            'error': True,
+            'message': str(e),
+            'traceback': traceback.format_exc()
+        }
+        sys.stdout.write("__NEOGHIDRA_JSON_START__\n")
+        sys.stdout.write(json.dumps(error_result, indent=2))
+        sys.stdout.write("\n__NEOGHIDRA_JSON_END__\n")
+        sys.stdout.flush()
