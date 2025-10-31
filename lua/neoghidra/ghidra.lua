@@ -72,11 +72,21 @@ function M.analyze_binary(binary_path, callback)
           local success, result = pcall(vim.json.decode, json_str)
 
           if success then
-            utils.notify("Analysis complete!")
-            -- Cache result
-            utils.cache_set(binary_path, result)
-            if callback then
-              callback(result, nil)
+            -- Check if result contains an error
+            if result.error then
+              local err = "Ghidra analysis error: " .. (result.message or "unknown error")
+              utils.error(err)
+              if result.traceback then
+                utils.error("Traceback:\n" .. result.traceback)
+              end
+              if callback then callback(nil, err) end
+            else
+              utils.notify("Analysis complete!")
+              -- Cache result
+              utils.cache_set(binary_path, result)
+              if callback then
+                callback(result, nil)
+              end
             end
           else
             local err = "Failed to parse Ghidra output: " .. tostring(result)
