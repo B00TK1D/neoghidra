@@ -64,11 +64,26 @@ function M.analyze_binary(binary_path, callback)
         local output = table.concat(data, "\n")
 
         -- Extract JSON output
-        local json_start = output:find("__NEOGHIDRA_JSON_START__")
-        local json_end = output:find("__NEOGHIDRA_JSON_END__")
+        local json_start = output:find("__NEOGHIDRA_JSON_START__", 1, true)
+        local json_end = output:find("__NEOGHIDRA_JSON_END__", 1, true)
 
         if json_start and json_end then
+          -- Extract JSON between markers
           local json_str = output:sub(json_start + 28, json_end - 1)
+
+          -- Trim whitespace
+          json_str = json_str:gsub("^%s+", ""):gsub("%s+$", "")
+
+          -- Debug: save raw JSON to temp file for inspection
+          local debug_file = vim.fn.tempname() .. "_neoghidra_debug.json"
+          local f = io.open(debug_file, "w")
+          if f then
+            f:write(json_str)
+            f:close()
+            utils.notify("Debug JSON saved to: " .. debug_file)
+          end
+
+          -- Try to parse JSON
           local success, result = pcall(vim.json.decode, json_str)
 
           if success then
@@ -91,6 +106,8 @@ function M.analyze_binary(binary_path, callback)
           else
             local err = "Failed to parse Ghidra output: " .. tostring(result)
             utils.error(err)
+            utils.error("JSON string (first 200 chars): " .. json_str:sub(1, 200))
+            utils.error("See full JSON in: " .. debug_file)
             if callback then callback(nil, err) end
           end
         end

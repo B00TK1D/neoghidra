@@ -65,6 +65,9 @@ if grep -q "__NEOGHIDRA_JSON_START__" /tmp/ghidra_output.log; then
         sed '/__NEOGHIDRA_JSON_END__/d' > /tmp/ghidra_result.json
 
     echo ""
+    echo "Raw JSON size: $(wc -c < /tmp/ghidra_result.json) bytes"
+    echo "JSON lines: $(wc -l < /tmp/ghidra_result.json)"
+    echo ""
     echo "JSON Result (first 50 lines):"
     echo "-------------------------------------------"
     head -n 50 /tmp/ghidra_result.json
@@ -72,7 +75,9 @@ if grep -q "__NEOGHIDRA_JSON_START__" /tmp/ghidra_output.log; then
 
     # Validate JSON
     if command -v python3 &> /dev/null; then
-        if python3 -m json.tool /tmp/ghidra_result.json > /dev/null 2>&1; then
+        echo ""
+        echo "Validating JSON with Python..."
+        if python3 -m json.tool /tmp/ghidra_result.json > /tmp/ghidra_result_formatted.json 2>/tmp/json_error.log; then
             echo "✓ JSON is valid!"
 
             # Show some key information
@@ -96,6 +101,13 @@ with open('/tmp/ghidra_result.json') as f:
 PYEOF
         else
             echo "✗ JSON is invalid!"
+            echo ""
+            echo "JSON Error:"
+            cat /tmp/json_error.log
+            echo ""
+            echo "First 500 characters of JSON:"
+            head -c 500 /tmp/ghidra_result.json
+            echo ""
             exit 1
         fi
     fi
