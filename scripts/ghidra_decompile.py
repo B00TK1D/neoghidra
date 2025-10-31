@@ -1,7 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 """
 Ghidra Headless Decompiler Script
 This script runs in Ghidra's headless mode to analyze and decompile binaries.
+Note: This script runs under Jython (Python 2.x compatible), not CPython.
 """
 
 # @category: NeoGhidra
@@ -103,7 +104,7 @@ def rename_symbol(address_str, new_name):
 
         for symbol in symbols:
             symbol.setName(new_name, SourceType.USER_DEFINED)
-            return {'success': True, 'message': f'Renamed to {new_name}'}
+            return {'success': True, 'message': 'Renamed to {}'.format(new_name)}
 
         return {'success': False, 'message': 'No symbol found at address'}
     except Exception as e:
@@ -122,7 +123,7 @@ def set_data_type(address_str, type_str):
         data = listing.getDataAt(address)
         if data:
             listing.createData(address, data_type)
-            return {'success': True, 'message': f'Set type to {type_str}'}
+            return {'success': True, 'message': 'Set type to {}'.format(type_str)}
 
         return {'success': False, 'message': 'No data at address'}
     except Exception as e:
