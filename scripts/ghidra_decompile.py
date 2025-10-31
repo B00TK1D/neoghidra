@@ -131,52 +131,61 @@ def set_data_type(address_str, type_str):
 
 def analyze_program():
     """Main analysis function."""
-    # Initialize decompiler
-    decompiler = DecompInterface()
-    decompiler.openProgram(currentProgram)
+    try:
+        # Initialize decompiler
+        decompiler = DecompInterface()
+        decompiler.openProgram(currentProgram)
 
-    # Get entry point
-    entry_addr = get_entry_point()
+        # Get entry point
+        entry_addr = get_entry_point()
 
-    # Get function at entry point
-    function_manager = currentProgram.getFunctionManager()
-    entry_function = function_manager.getFunctionContaining(entry_addr)
+        # Get function at entry point
+        function_manager = currentProgram.getFunctionManager()
+        entry_function = function_manager.getFunctionContaining(entry_addr)
 
-    # Decompile entry function
-    entry_decompiled = decompile_function(decompiler, entry_function)
+        # Decompile entry function (may be None if no function at entry)
+        entry_decompiled = None
+        if entry_function is not None:
+            entry_decompiled = decompile_function(decompiler, entry_function)
 
-    # Get all functions
-    functions = get_functions()
+        # Get all functions
+        functions = get_functions()
 
-    # Get all symbols
-    symbols = get_symbols()
+        # Get all symbols
+        symbols = get_symbols()
 
-    # Get disassembly at entry point
-    disassembly = get_disassembly(entry_addr)
+        # Get disassembly at entry point
+        disassembly = get_disassembly(entry_addr)
 
-    # Build result
-    result = {
-        'program_name': currentProgram.getName(),
-        'entry_point': str(entry_addr),
-        'entry_function': entry_decompiled,
-        'functions': functions,
-        'symbols': symbols,
-        'disassembly': disassembly,
-        'image_base': str(currentProgram.getImageBase()),
-        'language': str(currentProgram.getLanguageID())
-    }
+        # Build result
+        result = {
+            'program_name': currentProgram.getName(),
+            'entry_point': str(entry_addr),
+            'entry_function': entry_decompiled,
+            'functions': functions,
+            'symbols': symbols,
+            'disassembly': disassembly,
+            'image_base': str(currentProgram.getImageBase()),
+            'language': str(currentProgram.getLanguageID())
+        }
 
-    return result
+        return result
+    except Exception as e:
+        # Return error information
+        import traceback
+        return {
+            'error': True,
+            'message': str(e),
+            'traceback': traceback.format_exc(),
+            'program_name': currentProgram.getName() if currentProgram else 'unknown'
+        }
 
 # Main execution
 if __name__ == '__main__':
     monitor = ConsoleTaskMonitor()
 
-    # Analyze if not already analyzed
-    from ghidra.app.script import GhidraScriptUtil
-    if not currentProgram.getAnalyzed():
-        from ghidra.app.util.headless import HeadlessAnalyzer
-        analyzeAll(currentProgram)
+    # Note: When run via analyzeHeadless, the program is automatically analyzed
+    # We don't need to trigger analysis manually here
 
     result = analyze_program()
 

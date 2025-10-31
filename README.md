@@ -333,6 +333,32 @@ All formats supported by Ghidra are compatible.
 - Check for keymap conflicts with `:verbose map <leader>gt`
 - Customize keymaps in setup() if needed
 
+## Testing
+
+A test suite is provided in the `test/` directory for validating NeoGhidra functionality.
+
+### Running Tests
+
+```bash
+cd test
+./test_ghidra.sh
+```
+
+This will:
+1. Check Ghidra installation
+2. Compile a test binary
+3. Run Ghidra headless analysis
+4. Validate JSON output
+5. Display results
+
+### Prerequisites for Testing
+
+- Ghidra installed (set `GHIDRA_INSTALL_DIR` environment variable)
+- GCC compiler
+- Python 3 (for validation)
+
+See `test/README.md` for detailed testing instructions.
+
 ## Limitations
 
 - Symbol renaming is currently cached locally (not persisted to Ghidra project)
