@@ -1,0 +1,51 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Documentation
+*.md
+!standalone/README.md
+docs/
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+
+# Test binaries
+test/test_binary
+test/*.log
+
+# Build artifacts
+*.o
+*.so
+*.dylib
+*.dll
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*~
+
+# Node modules (if any)
+node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Binaries directory (will be mounted)
+binaries/
+
+# Docker files (don't copy into image)
+Dockerfile
+docker-compose.yml
+.dockerignore

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  neoghidra:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: neoghidra:latest
+    container_name: neoghidra
+    stdin_open: true
+    tty: true
+    volumes:
+      # Mount directory with binaries to analyze
+      - ./binaries:/binaries
+      # Persist Ghidra projects and analysis cache
+      - neoghidra-data:/home/ghidra/.local/share/nvim/neoghidra
+      # Optional: persist Neovim configuration changes
+      - neoghidra-config:/home/ghidra/.config/nvim
+    environment:
+      - GHIDRA_INSTALL_DIR=/opt/ghidra
+    working_dir: /binaries
+
+volumes:
+  neoghidra-data:
+  neoghidra-config:
