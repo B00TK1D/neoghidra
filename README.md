@@ -14,15 +14,67 @@ A Neovim plugin that integrates Ghidra's powerful decompilation engine directly 
 - **View Switching**: Seamlessly toggle between decompiler and disassembly views
 - **Function Browser**: List and navigate all functions with Telescope or Quickfix integration
 
-## Prerequisites
+## Quick Start with Docker 🐳
+
+**The fastest way to get started** - no manual installation required!
+
+```bash
+# Build the Docker image (one-time setup)
+./neoghidra-docker.sh build
+
+# Decompile a binary
+./neoghidra-docker.sh run /path/to/binary
+
+# Or start interactive session
+./neoghidra-docker.sh shell
+```
+
+The Docker image includes:
+- ✅ Ghidra 11.2.1 (pre-installed)
+- ✅ Neovim 0.10.2 (configured)
+- ✅ NeoGhidra (ready to use)
+- ✅ All dependencies (Java, plugins, etc.)
+
+**See [DOCKER.md](DOCKER.md) for complete Docker documentation.**
+
+## Prerequisites (Native Installation)
 
 - Neovim 0.8 or later
 - [Ghidra](https://ghidra-sre.org/) installed and configured
 - Python 3 (for Ghidra headless scripts)
+- Java 17+ (for Ghidra)
 - (Optional) [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) for enhanced syntax highlighting
 - (Optional) [telescope.nvim](https://github.com/nvim-telescope/telescope.nvim) for better function/symbol browsing
 
 ## Installation
+
+### Option 1: Automated Install Script (Standalone)
+
+For a complete standalone setup with Ghidra and Neovim:
+
+```bash
+# Clone the repository
+git clone https://github.com/B00TK1D/neoghidra.git
+cd neoghidra
+
+# Run the install script
+./standalone/scripts/install.sh
+
+# Launch NeoGhidra
+neoghidra /path/to/binary
+```
+
+This installs:
+- Ghidra (downloaded automatically)
+- Neovim (if not installed)
+- NeoGhidra with standalone config
+- All necessary dependencies
+
+### Option 2: Docker (Recommended for Testing)
+
+See [Quick Start with Docker](#quick-start-with-docker-) above or [DOCKER.md](DOCKER.md).
+
+### Option 3: Manual Plugin Installation
 
 ### Using [lazy.nvim](https://github.com/folke/lazy.nvim)
 
